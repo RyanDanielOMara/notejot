@@ -3,17 +3,33 @@
  * server. 
 */
 
-const express = require('express');
-const app     = express();
-const exphbs  = require('express-handlebars');
-const port    = 5000;
+const express  = require('express');
+const exphbs   = require('express-handlebars');
+const mongoose = require('mongoose');
 
-init_middleware()
-init_routes()
+const app  = express();
+const port = 5000;
+
+connect_db();
+init_middleware();
+init_routes();
+
 
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });
+
+/**
+ * Connect to our Mongo Database using Mongoose
+ */
+function connect_db(){
+    mongoose.Promise = global.Promise;
+    mongoose.connect('mongodb://localhost/vidjot-dev', {
+        useMongoClient: true
+    })
+        .then(() => console.log('MongoDB Connected...'))
+        .catch(err => console.log(err));
+}
 
 /**
  * Initialize middleware
