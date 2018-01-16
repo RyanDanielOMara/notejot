@@ -11,6 +11,7 @@ const app  = express();
 const port = 5000;
 
 connect_db();
+load_models();
 init_middleware();
 init_routes();
 
@@ -29,6 +30,15 @@ function connect_db(){
     })
         .then(() => console.log('MongoDB Connected...'))
         .catch(err => console.log(err));
+    load_models();
+}
+
+/**
+ * Loads all models based on pre-defined schema
+ */
+function load_models(){
+    require('./models/Idea');
+    const Idea = mongoose.model('ideas');
 }
 
 /**
