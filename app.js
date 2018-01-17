@@ -3,9 +3,10 @@
  * server. 
 */
 
-const express  = require('express');
-const exphbs   = require('express-handlebars');
-const mongoose = require('mongoose');
+const exphbs     = require('express-handlebars');
+const express    = require('express');
+const mongoose   = require('mongoose');
+const bodyParser = require('body-parser');
 
 const app  = express();
 const port = 5000;
@@ -43,7 +44,8 @@ function load_models(){
 
 /**
  * Initialize middleware
- * Handlebars middleware for template rendering
+ *   - Handlebars middleware for template rendering
+ *   - Body-parser for parsing the body of HTTP requests in Node.js
  */
 function init_middleware(){
     // Handlebars middleware
@@ -51,6 +53,11 @@ function init_middleware(){
         defaultLayout: 'main'
     }));
     app.set('view engine', 'handlebars');
+
+    //Body-parser middleware
+    app.use(bodyParser.urlencoded({ extended: false}));
+    app.use(bodyParser.json());
+
 }
 
 /**
@@ -66,12 +73,42 @@ function init_routes(){
 
     // About route
     app.get('/about', (req, res) => {
-        res.render('about')
-    })
+        res.render('about');
+    });
 
     // About route
     app.get('/ideas/add', (req, res) => {
-        res.render('ideas/add')
-    })
+        res.render('ideas/add');
+    });
+
+    //Process Form
+    app.post('/ideas', (req, res) => {
+        validate_video_idea_form(req, res);
+    });
     
+}
+
+/**
+ * Server-side validation for the video idea form.
+ * @param {Object} req - The HTTP request made by the client. 
+ * @param {Object} res - The HTTP response.
+ */
+function validate_video_idea_form(req, res) {
+    let errors = [];
+        
+    if (!req.body.title){
+        errors.push({text:'Please add a title'});
+    }
+    if (!req.body.details){
+        errors.push({text:'Please add some details'});
+    }
+    if(errors.length > 0) {
+        res.render('ideas/add', {
+            errors: errors,
+            title: req.body.title,
+            details: req.body.details
+        });
+    } else {
+        res.send('Form Validated');
+    }
 }
