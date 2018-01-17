@@ -55,8 +55,8 @@ function init_middleware(){
 
 /**
  * Initialize routes
- * Index
- * About
+ *   - Index
+ *   - About
  */
 function init_routes(){
     // Index route
@@ -68,4 +68,10 @@ function init_routes(){
     app.get('/about', (req, res) => {
         res.render('about')
     })
+
+    // About route
+    app.get('/ideas/add', (req, res) => {
+        res.render('ideas/add')
+    })
+    
 }
