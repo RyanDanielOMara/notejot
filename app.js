@@ -20,7 +20,7 @@ init_routes();
 
 
 app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
+    console.log(`Server started on port ${port}...`);
 });
 
 /**
@@ -31,7 +31,7 @@ function connect_db(){
     mongoose.connect('mongodb://localhost/vidjot-dev', {
         useMongoClient: true
     })
-        .then(() => console.log('MongoDB Connected...'))
+        .then(() => console.log('MongoDB connected...'))
         .catch(err => console.log(err));
 }
 
@@ -67,6 +67,17 @@ function init_routes(){
     // About route
     app.get('/about', (req, res) => {
         res.render('about');
+    });
+
+    // Idea page
+    app.get('/ideas', (req, res) => {
+        Idea.find({})
+        .sort({date: 'descending'})
+        .then(ideas => {
+            res.render('ideas/index', {
+                ideas: ideas
+            });
+        });
     });
 
     // Form to add video ideas
