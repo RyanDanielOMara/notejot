@@ -80,6 +80,18 @@ function init_routes(){
         });
     });
 
+    // Form to edit video ideas
+    app.get('/ideas/edit/:id', (req, res) => {
+        Idea.findOne({
+            _id: req.params.id
+        })
+        .then(idea => {
+            res.render('ideas/edit', {
+                idea: idea
+            });
+        });
+    });
+
     // Form to add video ideas
     app.get('/ideas/add', (req, res) => {
         res.render('ideas/add');
