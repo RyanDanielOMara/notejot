@@ -8,11 +8,13 @@ const express    = require('express');
 const mongoose   = require('mongoose');
 const bodyParser = require('body-parser');
 
+// Models
+const Idea = require('./models/Idea').Idea;
+
 const app  = express();
 const port = 5000;
 
 connect_db();
-load_models();
 init_middleware();
 init_routes();
 
@@ -31,15 +33,6 @@ function connect_db(){
     })
         .then(() => console.log('MongoDB Connected...'))
         .catch(err => console.log(err));
-    load_models();
-}
-
-/**
- * Loads all models based on pre-defined schema
- */
-function load_models(){
-    require('./models/Idea');
-    const Idea = mongoose.model('ideas');
 }
 
 /**
@@ -76,12 +69,12 @@ function init_routes(){
         res.render('about');
     });
 
-    // About route
+    // Form to add video ideas
     app.get('/ideas/add', (req, res) => {
         res.render('ideas/add');
     });
 
-    //Process Form
+    // Endpoint for processing video idea forms
     app.post('/ideas', (req, res) => {
         validate_video_idea_form(req, res);
     });
@@ -109,6 +102,26 @@ function validate_video_idea_form(req, res) {
             details: req.body.details
         });
     } else {
-        res.send('Form Validated');
+        save_video_form(req, res);
     }
+}
+
+/**
+ * Creates an object containing:
+ *   - Title: title of the client's submission
+ *   - Details: details of the client's submission
+ * Creates and saves an Idea to the database and then redirects the user.
+ * @param {Object} req - The HTTP request made by the client. 
+ * @param {Object} res - The HTTP response.
+ */
+function save_video_form(req, res){
+    const newUser = {
+        title: req.body.title,
+        details: req.body.details
+    }
+    new Idea(newUser)
+        .save()
+        .then(idea => {
+            res.redirect('/ideas');
+        });
 }
