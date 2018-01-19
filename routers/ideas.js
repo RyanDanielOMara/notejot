@@ -10,6 +10,7 @@ function define_routes(){
     create_add_route();
     create_edit_route();
     create_edit_endpoint();
+    create_delete_endpoint();
 }
 
 /**
@@ -83,6 +84,21 @@ function create_edit_endpoint(){
                     res.redirect('/ideas');
                 })
         })
+    });
+}
+
+/**
+ * Creates DELETE route for ideas:/id where :id is the id of an idea in the DB.
+ * 
+ * Locates the idea from the database with the id passed in as a parameter and
+ * then removes it from the database, then reloads the ideas view.
+ */
+function create_delete_endpoint(){
+    router.delete('/:id', (req, res) => {
+        Idea.remove({_id: req.params.id})
+            .then(() => {
+                res.redirect('/ideas');
+            });
     });
 }
 
