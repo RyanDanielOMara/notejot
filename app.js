@@ -75,54 +75,57 @@ function init_routes(){
         res.render('about');
     });
 
-    // Idea page
-    app.get('/ideas', (req, res) => {
-        Idea.find({})
-        .sort({date: 'descending'})
-        .then(ideas => {
-            res.render('ideas/index', {
-                ideas: ideas
-            });
-        });
-    });
+    const ideas = require('./routers/ideas');
+    app.use('/ideas', ideas);
 
-    // Form to edit video ideas
-    app.get('/ideas/edit/:id', (req, res) => {
-        Idea.findOne({
-            _id: req.params.id
-        })
-        .then(idea => {
-            res.render('ideas/edit', {
-                idea: idea
-            });
-        });
-    });
+    // // Idea page
+    // app.get('/ideas', (req, res) => {
+    //     Idea.find({})
+    //     .sort({date: 'descending'})
+    //     .then(ideas => {
+    //         res.render('ideas/index', {
+    //             ideas: ideas
+    //         });
+    //     });
+    // });
 
-    // Form to add video ideas
-    app.get('/ideas/add', (req, res) => {
-        res.render('ideas/add');
-    });
+    // // Form to edit video ideas
+    // app.get('/ideas/edit/:id', (req, res) => {
+    //     Idea.findOne({
+    //         _id: req.params.id
+    //     })
+    //     .then(idea => {
+    //         res.render('ideas/edit', {
+    //             idea: idea
+    //         });
+    //     });
+    // });
 
-    // Endpoint for processing video idea forms
-    app.post('/ideas', (req, res) => {
-        validate_video_idea_form(req, res);
-    });
+    // // Form to add video ideas
+    // app.get('/ideas/add', (req, res) => {
+    //     res.render('ideas/add');
+    // });
 
-    // Edit form process
-    app.put('/ideas/:id', (req, res) => {
-        Idea.findOne({
-            _id: req.params.id
-        })
-        .then(idea => {
-            idea.title = req.body.title;
-            idea.details = req.body.details;
+    // // Endpoint for processing video idea forms
+    // app.post('/ideas', (req, res) => {
+    //     validate_video_idea_form(req, res);
+    // });
 
-            idea.save()
-                .then(idea => {
-                    res.redirect('/ideas');
-                })
-        })
-    });
+    // // Edit form process
+    // app.put('/ideas/:id', (req, res) => {
+    //     Idea.findOne({
+    //         _id: req.params.id
+    //     })
+    //     .then(idea => {
+    //         idea.title = req.body.title;
+    //         idea.details = req.body.details;
+
+    //         idea.save()
+    //             .then(idea => {
+    //                 res.redirect('/ideas');
+    //             })
+    //     })
+    // });
     
 }
 
