@@ -3,10 +3,11 @@
  * server. 
 */
 
-const exphbs     = require('express-handlebars');
-const express    = require('express');
-const mongoose   = require('mongoose');
-const bodyParser = require('body-parser');
+const exphbs         = require('express-handlebars');
+const express        = require('express');
+const mongoose       = require('mongoose');
+const bodyParser     = require('body-parser');
+const methodOverride = require('method-override');
 
 // Models
 const Idea = require('./models/Idea').Idea;
@@ -39,6 +40,8 @@ function connect_db(){
  * Initialize middleware
  *   - Handlebars middleware for template rendering
  *   - Body-parser for parsing the body of HTTP requests in Node.js
+ *   - Method-override for using HTTP verbs such as PUT where client doesn't 
+ *     support it
  */
 function init_middleware(){
     // Handlebars middleware
@@ -50,6 +53,9 @@ function init_middleware(){
     //Body-parser middleware
     app.use(bodyParser.urlencoded({ extended: false}));
     app.use(bodyParser.json());
+
+    // Method-override middleware
+    app.use(methodOverride('_method'));
 
 }
 
@@ -100,6 +106,22 @@ function init_routes(){
     // Endpoint for processing video idea forms
     app.post('/ideas', (req, res) => {
         validate_video_idea_form(req, res);
+    });
+
+    // Edit form process
+    app.put('/ideas/:id', (req, res) => {
+        Idea.findOne({
+            _id: req.params.id
+        })
+        .then(idea => {
+            idea.title = req.body.title;
+            idea.details = req.body.details;
+
+            idea.save()
+                .then(idea => {
+                    res.redirect('/ideas');
+                })
+        })
     });
     
 }
