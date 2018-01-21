@@ -84,7 +84,6 @@ function init_middleware(){
 
     // Static folder
     app.use(express.static(path.join(__dirname, 'public')));
-
 }
 
 /**
