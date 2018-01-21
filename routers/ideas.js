@@ -81,6 +81,7 @@ function create_edit_endpoint(){
 
             idea.save()
                 .then(idea => {
+                    req.flash('success_msg', 'Video idea updated');
                     res.redirect('/ideas');
                 })
         })
@@ -97,6 +98,7 @@ function create_delete_endpoint(){
     router.delete('/:id', (req, res) => {
         Idea.remove({_id: req.params.id})
             .then(() => {
+                req.flash('success_msg', 'Video idea removed');
                 res.redirect('/ideas');
             });
     });
@@ -144,6 +146,7 @@ function save_video_form(req, res){
     new Idea(newUser)
         .save()
         .then(idea => {
+            req.flash('success_msg', 'Video idea added');
             res.redirect('/ideas');
         });
 }
