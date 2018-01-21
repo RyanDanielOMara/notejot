@@ -9,6 +9,7 @@ const express        = require('express');
 const flash          = require('connect-flash');
 const mongoose       = require('mongoose');
 const methodOverride = require('method-override');
+const path           = require('path');
 const session        = require('express-session')
 
 // Models
@@ -16,6 +17,7 @@ const Idea = require('./models/Idea').Idea;
 
 // Routers
 const ideas = require('./routers/ideas');
+const users = require('./routers/users');
 
 const app  = express();
 const port = 5000;
@@ -80,6 +82,9 @@ function init_middleware(){
         next();
     });
 
+    // Static folder
+    app.use(express.static(path.join(__dirname, 'public')));
+
 }
 
 /**
@@ -101,4 +106,8 @@ function init_routes(){
 
     // Ideas router
     app.use('/ideas', ideas);
+
+    // Users router
+    app.use('/users', users);
+
 }
