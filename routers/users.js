@@ -10,6 +10,7 @@ define_routes();
 function define_routes(){
     create_login_routes();
     create_register_routes();
+    create_logout_route();
 }
 
 /**
@@ -28,9 +29,6 @@ function create_login_routes() {
         })(req, res, next);
     });
 }
-function t() {
-
-}
 
 /**
  * Creates GET/POST routes for the register page.
@@ -47,6 +45,14 @@ function create_register_routes(){
                 verify_unique_email(req, res)
             }
         });
+}
+
+function create_logout_route(){
+    router.get('/logout', (req, res) => {
+        req.logout();
+        req.flash('success_msg', "You've been logged out.");
+        res.redirect('login');
+    });
 }
 
 /**
