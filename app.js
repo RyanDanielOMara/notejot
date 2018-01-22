@@ -9,6 +9,7 @@ const express        = require('express');
 const flash          = require('connect-flash');
 const mongoose       = require('mongoose');
 const methodOverride = require('method-override');
+const passport       = require('passport');
 const path           = require('path');
 const session        = require('express-session')
 
@@ -21,6 +22,8 @@ const users = require('./routers/users');
 
 const app  = express();
 const port = 5000;
+
+require('./config/passport')(passport);
 
 connect_db();
 init_middleware();

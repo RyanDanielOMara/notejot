@@ -8,17 +8,28 @@ const router = express.Router();
 define_routes();
 
 function define_routes(){
-    create_login_route();
-    create_register_route();
+    create_login_routes();
+    create_register_routes();
 }
 
 /**
  * Creates GET route for users/login - renders the 'login' view.
  */
-function create_login_route() {
-    router.get('/login', (req, res) => {
+function create_login_routes() {
+    router.route('/login')
+    .get((req, res) => {
         res.render('users/login');
+    })
+    .post((req, res, next) => {
+        passport.authenticate('local', {
+            successRedirect: '/ideas',
+            failureRedirect: 'login',
+            failureFlash:     true
+        })(req, res, next);
     });
+}
+function t() {
+
 }
 
 /**
@@ -26,7 +37,7 @@ function create_login_route() {
  * GET: Renders the 'register' view
  * POST: Attempts to validate, register, and save a new user to the database
  */
-function create_register_route(){
+function create_register_routes(){
     router.route('/register')
         .get((req, res) => {
             res.render('users/register');
