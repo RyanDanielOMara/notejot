@@ -21,18 +21,18 @@ function define_routes(){
  */
 function create_home_route(){
     router.route('/')
-    .get((req, res) => {
-        Idea.find({})
-        .sort({date: 'descending'})
-        .then(ideas => {
-            res.render('ideas/index', {
-                ideas: ideas
+        .get((req, res) => {
+            Idea.find({})
+            .sort({date: 'descending'})
+            .then(ideas => {
+                res.render('ideas/index', {
+                    ideas: ideas
+                });
             });
+        })
+        .post((req, res) => {
+            validate_video_idea_form(req, res);
         });
-    })
-    .post((req, res) => {
-        validate_video_idea_form(req, res);
-    });
 }
 
 /**
