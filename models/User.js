@@ -22,7 +22,7 @@ const UserSchema = new Schema({
     }
 });
 
-const User = mongoose.model('users', IdeaSchema);
+const User = mongoose.model('users', UserSchema);
 
 module.exports = {
     User: User

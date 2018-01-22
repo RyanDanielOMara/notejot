@@ -1,7 +1,7 @@
 const express = require('express');
-const router = express.Router()
+const Idea    = require('../models/Idea').Idea;
 
-const Idea = require('../models/Idea').Idea;
+const router = express.Router();
 
 define_routes();
 
