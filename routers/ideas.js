@@ -1,6 +1,8 @@
 const express = require('express');
 const Idea    = require('../models/Idea').Idea;
 
+const {ensureAuthenticated} = require('../helpers/auth');
+
 const router = express.Router();
 
 define_routes();
@@ -21,7 +23,7 @@ function define_routes(){
  */
 function create_home_route(){
     router.route('/')
-        .get((req, res) => {
+        .get(ensureAuthenticated, (req, res) => {
             Idea.find({})
             .sort({date: 'descending'})
             .then(ideas => {
@@ -30,7 +32,7 @@ function create_home_route(){
                 });
             });
         })
-        .post((req, res) => {
+        .post(ensureAuthenticated, (req, res) => {
             validate_video_idea_form(req, res);
         });
 }
@@ -39,7 +41,7 @@ function create_home_route(){
  * Creates GET route for ideas/add - renders the 'add' view.
  */
 function create_add_route(){
-    router.get('/add', (req, res) => {
+    router.get('/add', ensureAuthenticated, (req, res) => {
         res.render('ideas/add');
     });
 }
@@ -50,7 +52,7 @@ function create_add_route(){
  * edit view with the information from the requested idea.
  */
 function create_edit_route(){
-    router.get('/edit/:id', (req, res) => {
+    router.get('/edit/:id', ensureAuthenticated, (req, res) => {
         Idea.findOne({
             _id: req.params.id
         })
@@ -71,7 +73,7 @@ function create_edit_route(){
  * index.
  */
 function create_edit_endpoint(){
-    router.put('/:id', (req, res) => {
+    router.put('/:id', ensureAuthenticated, (req, res) => {
         Idea.findOne({
             _id: req.params.id
         })
@@ -95,7 +97,7 @@ function create_edit_endpoint(){
  * then removes it from the database, then reloads the ideas view.
  */
 function create_delete_endpoint(){
-    router.delete('/:id', (req, res) => {
+    router.delete('/:id', ensureAuthenticated, (req, res) => {
         Idea.remove({_id: req.params.id})
             .then(() => {
                 req.flash('success_msg', 'Video idea removed');
