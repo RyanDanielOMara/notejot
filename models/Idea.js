@@ -4,7 +4,7 @@ const Schema   = mongoose.Schema;
 // Create Schema
 
 const IdeaSchema = new Schema({
-    title:{ 
+    title: { 
         type: String,
         required: true
     },
@@ -15,6 +15,10 @@ const IdeaSchema = new Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    user: {
+        type: String,
+        required: true
     }
 });
 

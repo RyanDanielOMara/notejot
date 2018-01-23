@@ -24,7 +24,7 @@ function define_routes(){
 function create_home_route(){
     router.route('/')
         .get(ensureAuthenticated, (req, res) => {
-            Idea.find({})
+            Idea.find({ user: req.user.id })
             .sort({date: 'descending'})
             .then(ideas => {
                 res.render('ideas/index', {
@@ -57,9 +57,18 @@ function create_edit_route(){
             _id: req.params.id
         })
         .then(idea => {
-            res.render('ideas/edit', {
-                idea: idea
-            });
+            if(!idea) {
+                req.flash('error_msg', 'You have entered an invalid ID.');
+                res.redirect('/ideas');
+            } else if(idea.user != req.user.id) {
+                req.flash('error_msg', 'You are not authorized to access this page.');
+                res.redirect('/ideas');
+            } else {
+                res.render('ideas/edit', {
+                    idea: idea
+                });
+            }
+
         });
     });
 }
@@ -78,15 +87,19 @@ function create_edit_endpoint(){
             _id: req.params.id
         })
         .then(idea => {
-            idea.title = req.body.title;
-            idea.details = req.body.details;
-
-            idea.save()
-                .then(idea => {
-                    req.flash('success_msg', 'Video idea updated');
-                    res.redirect('/ideas');
-                })
-        })
+            if(idea){
+                if(idea.user == req.user.id) {
+                    idea.title = req.body.title;
+                    idea.details = req.body.details;
+        
+                    idea.save()
+                        .then(idea => {
+                            req.flash('success_msg', 'Video idea updated');
+                            res.redirect('/ideas');
+                        })
+                } 
+            }   
+        });
     });
 }
 
@@ -98,11 +111,20 @@ function create_edit_endpoint(){
  */
 function create_delete_endpoint(){
     router.delete('/:id', ensureAuthenticated, (req, res) => {
-        Idea.remove({_id: req.params.id})
-            .then(() => {
-                req.flash('success_msg', 'Video idea removed');
-                res.redirect('/ideas');
-            });
+        Idea.findOne({
+            _id: req.params.id
+        })
+        .then(idea => {
+            if(idea){
+                if(idea.user == req.user.id) {
+                    Idea.remove({_id: req.params.id})
+                    .then(() => {
+                        req.flash('success_msg', 'Video idea removed');
+                        res.redirect('/ideas');
+                    });
+                }
+            }
+        });
     });
 }
 
@@ -142,8 +164,9 @@ function validate_video_idea_form(req, res) {
  */
 function save_video_form(req, res){
     const newUser = {
-        title: req.body.title,
-        details: req.body.details
+        title:   req.body.title,
+        details: req.body.details,
+        user:    req.user.id
     }
     new Idea(newUser)
         .save()
