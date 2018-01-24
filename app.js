@@ -20,8 +20,13 @@ const Idea = require('./models/Idea').Idea;
 const ideas = require('./routers/ideas');
 const users = require('./routers/users');
 
-const app  = express();
-const port = 5000;
+// DB Config
+const db = require('./config/database');
+
+// Define Port
+const port = process.env.PORT || 5000;
+
+const app = express();
 
 require('./config/passport')(passport);
 
@@ -39,7 +44,7 @@ app.listen(port, () => {
  */
 function connect_db(){
     mongoose.Promise = global.Promise;
-    mongoose.connect('mongodb://localhost/vidjot-dev', {
+    mongoose.connect(db.mongoURI, {
         useMongoClient: true
     })
         .then(() => console.log('MongoDB connected...'))
